@@ -1,0 +1,18 @@
+# ========================================
+# BOOTSTRAP - SE CARGA ANTES QUE application.properties
+# ========================================
+
+# Nombre de la aplicación (debe coincidir con el archivo en GitHub)
+spring.application.name=vault-integration
+
+# URL del Config Server
+spring.cloud.config.uri=http://localhost:8888
+
+# Habilitar Config Client
+spring.cloud.config.enabled=true
+
+# Fallar si no puede conectarse al Config Server
+spring.cloud.config.fail-fast=true
+
+# Perfil (opcional: dev, prod, test)
+# spring.profiles.active=dev

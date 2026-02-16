@@ -1,0 +1,5 @@
+package com.uisrael.vault.models;
+
+public class Descuentos {
+
+}

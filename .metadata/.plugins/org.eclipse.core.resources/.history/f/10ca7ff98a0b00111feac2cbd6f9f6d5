@@ -1,0 +1,26 @@
+package com.uisrael.vault.controller;
+
+
+import com.uisrael.vault.models.Descuentos;
+import com.uisrael.vault.repository.DescuentoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/vault")
+public class DescuentoController {
+    @Autowired
+    private DescuentoRepository repo;
+
+    @GetMapping("/productos")
+    public List<Descuentos> getProductos() {
+        return repo.findAll();
+    }
+
+    @PostMapping("/productos")
+    public Descuentos createProducto(@RequestBody Descuentos producto) {
+        return repo.save(producto);
+    }
+}

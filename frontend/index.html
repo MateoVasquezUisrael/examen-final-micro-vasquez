@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos y Descuentos</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Sistema de Gestión</h1>
+        
+        <!-- Pestañas -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('productos')">Productos</button>
+            <button class="tab-button" onclick="showTab('descuentos')">Descuentos</button>
+        </div>
+
+        <!-- Sección de Productos -->
+        <div id="productos-section" class="tab-content active">
+            <h2>Productos</h2>
+            
+            <!-- Formulario para crear producto -->
+            <div class="form-container">
+                <h3>Crear Nuevo Producto</h3>
+                <form id="producto-form">
+                    <input type="text" id="producto-nombre" placeholder="Nombre" required>
+                    <input type="number" id="producto-precio" placeholder="Precio" step="0.01" required>
+                    <input type="number" id="producto-stock" placeholder="Stock" required>
+                    <textarea id="producto-descripcion" placeholder="Descripción"></textarea>
+                    <button type="submit">Crear Producto</button>
+                </form>
+            </div>
+
+            <!-- Lista de productos -->
+            <div class="list-container">
+                <h3>Lista de Productos</h3>
+                <div id="productos-lista"></div>
+            </div>
+        </div>
+
+        <!-- Sección de Descuentos -->
+        <div id="descuentos-section" class="tab-content">
+            <h2>Descuentos</h2>
+            
+            <!-- Formulario para crear descuento -->
+            <div class="form-container">
+                <h3>Crear Nuevo Descuento</h3>
+                <form id="descuento-form">
+                    <select id="descuento-producto" required>
+                        <option value="">Seleccionar Producto</option>
+                    </select>
+                    <input type="number" id="descuento-porcentaje" placeholder="Porcentaje (1-100)" min="1" max="100" required>
+                    <label>
+                        <input type="checkbox" id="descuento-estado" checked>
+                        Activo
+                    </label>
+                    <button type="submit">Crear Descuento</button>
+                </form>
+            </div>
+
+            <!-- Lista de descuentos -->
+            <div class="list-container">
+                <h3>Lista de Descuentos</h3>
+                <div id="descuentos-lista"></div>
+            </div>
+        </div>
+
+        <!-- Mensajes de notificación -->
+        <div id="notification" class="notification"></div>
+    </div>
+
+    <script src="js/productos.js"></script>
+    <script src="js/descuentos.js"></script>
+    <script>
+        // Función para cambiar entre pestañas
+        function showTab(tab) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.tab-content').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Quitar active de todos los botones
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Mostrar la sección seleccionada
+            document.getElementById(tab + '-section').classList.add('active');
+            event.target.classList.add('active');
+            
+            // Recargar datos según la pestaña
+            if (tab === 'productos') {
+                loadProductos();
+            } else if (tab === 'descuentos') {
+                loadDescuentos();
+                loadProductosSelect();
+            }
+        }
+
+        // Función para mostrar notificaciones
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Cargar datos al inicio
+        window.onload = () => {
+            loadProductos();
+        };
+    </script>
+</body>
+</html>

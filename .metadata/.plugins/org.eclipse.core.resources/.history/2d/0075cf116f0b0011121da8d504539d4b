@@ -1,0 +1,7 @@
+spring.config.import=vault://secret/db-credentials
+
+spring.cloud.vault.uri=http://localhost:8200
+spring.cloud.vault.token=mateo_vasquez
+spring.cloud.vault.kv.enabled=true
+spring.cloud.vault.kv.backend=secret
+spring.cloud.vault.kv.application-name=db-credentials

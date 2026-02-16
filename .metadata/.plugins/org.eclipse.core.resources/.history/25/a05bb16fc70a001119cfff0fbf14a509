@@ -1,0 +1,15 @@
+server.port=8081
+
+spring.datasource.url=jdbc:mysql://localhost:3306/db_examenFinalMicro?useSSL=false&serverTimezone=UTC
+
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+
+
+spring.application.name=vault-integration
+spring.config.import=vault://secret/db-credentials
+
+spring.cloud.vault.uri=http://localhost:8200
+spring.cloud.vault.token=mateo_vasquez
+spring.cloud.vault.kv.enabled=true
+spring.cloud.vault.kv.backend=secret
+spring.cloud.vault.kv.application-name=db-credentials

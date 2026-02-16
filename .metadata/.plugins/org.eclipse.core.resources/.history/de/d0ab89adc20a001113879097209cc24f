@@ -1,0 +1,4 @@
+com\uisrael\vault\controller\ProductoController.class
+com\uisrael\vault\VaultIntegrationApplication.class
+com\uisrael\vault\models\Producto.class
+com\uisrael\vault\repository\ProductoRepository.class

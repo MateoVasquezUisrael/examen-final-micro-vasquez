@@ -1,0 +1,5 @@
+package com.uisrael.vault.repository;
+
+public class DescuentoRepository {
+
+}

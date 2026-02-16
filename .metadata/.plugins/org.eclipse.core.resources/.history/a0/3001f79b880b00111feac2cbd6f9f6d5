@@ -1,0 +1,15 @@
+package com.uisrael.vault.models;
+
+import org.springframework.context.annotation.Primary;
+import javax.persistence.*;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "Descuento")
+public class Descuentos {
+
+}

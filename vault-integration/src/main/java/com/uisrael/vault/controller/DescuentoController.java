@@ -1,0 +1,47 @@
+package com.uisrael.vault.controller;
+
+
+import com.uisrael.vault.models.Descuentos;
+import com.uisrael.vault.repository.DescuentoRepository;
+
+import org.apache.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/vault")
+public class DescuentoController {
+    @Autowired
+    private DescuentoRepository repo;
+
+    @GetMapping("/descuentos")
+    public List<Descuentos> getProductos() {
+        return repo.findAll();
+    }
+
+    @PostMapping("/descuentos")
+    public Descuentos createProducto(@RequestBody Descuentos descuento) {
+    	 // Validar que el descuento no sea nulo
+        if (descuento.getDescuento() == null) {
+            throw new ResponseStatusException(
+                HttpStatus.SC_BAD_REQUEST, 
+                "El campo 'descuento' es requerido", null
+            );
+        }
+        
+        // Validar que el descuento esté entre 0.01 y 1 (1% a 100%)
+        if (descuento.getDescuento() < 0.01 || descuento.getDescuento() > 1) {
+            throw new ResponseStatusException(
+                HttpStatus.SC_BAD_REQUEST, 
+                "El descuento debe ser un porcentaje entre 0.01 (1%) y 1 (100%)", null
+            );
+        }
+        
+        return repo.save(descuento);
+
+    }
+}
