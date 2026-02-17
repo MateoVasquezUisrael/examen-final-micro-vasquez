@@ -26,8 +26,11 @@
                 <form id="producto-form">
                     <input type="text" id="producto-nombre" placeholder="Nombre" required>
                     <input type="number" id="producto-precio" placeholder="Precio" step="0.01" required>
-                    <input type="number" id="producto-stock" placeholder="Stock" required>
-                    <textarea id="producto-descripcion" placeholder="Descripción"></textarea>
+                    <input type="number" id="producto-idcategoria" placeholder="ID Categoría" required>
+                    <label>
+                        <input type="checkbox" id="producto-iva" checked>
+                        Aplica IVA
+                    </label>
                     <button type="submit">Crear Producto</button>
                 </form>
             </div>

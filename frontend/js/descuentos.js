@@ -21,24 +21,34 @@ function displayDescuentos(descuentos) {
         return;
     }
     
-    lista.innerHTML = descuentos.map(descuento => `
-        <div class="item-card">
-            <div class="item-header">
-                <span class="item-title">${descuento.producto.nombre}</span>
-                <div class="item-actions">
-                    <span class="badge ${descuento.estado ? 'badge-active' : 'badge-inactive'}">
-                        ${descuento.estado ? 'Activo' : 'Inactivo'}
-                    </span>
-                    <button class="btn btn-delete" onclick="deleteDescuento(${descuento.id})">Eliminar</button>
+    lista.innerHTML = descuentos.map(descuento => {
+        const precioOriginal = descuento.producto.precio;
+        const precioConDescuento = precioOriginal * (1 - descuento.descuento);
+        const precioFinal = descuento.producto.iva ? precioConDescuento * 1.15 : precioConDescuento;
+        
+        return `
+            <div class="item-card">
+                <div class="item-header">
+                    <span class="item-title">${descuento.producto.nombre}</span>
+                    <div class="item-actions">
+                        <span class="badge ${descuento.estado ? 'badge-active' : 'badge-inactive'}">
+                            ${descuento.estado ? 'Activo' : 'Inactivo'}
+                        </span>
+                    </div>
+                </div>
+                <div class="item-details">
+                    <p><strong>Descuento:</strong> ${(descuento.descuento * 100).toFixed(0)}%</p>
+                    <p><strong>Precio Original:</strong> $${precioOriginal.toFixed(2)}</p>
+                    <p><strong>Precio con Descuento:</strong> $${precioConDescuento.toFixed(2)}</p>
+                    ${descuento.producto.iva ? 
+                        `<p><strong>Precio Final (con IVA 15%):</strong> $${precioFinal.toFixed(2)}</p>` : 
+                        `<p><strong>Precio Final:</strong> $${precioFinal.toFixed(2)}</p>`
+                    }
+                    <p><strong>Categoría:</strong> ${descuento.producto.idcategoria}</p>
                 </div>
             </div>
-            <div class="item-details">
-                <p><strong>Descuento:</strong> ${(descuento.descuento * 100).toFixed(0)}%</p>
-                <p><strong>Precio Original:</strong> $${descuento.producto.precio.toFixed(2)}</p>
-                <p><strong>Precio con Descuento:</strong> $${(descuento.producto.precio * (1 - descuento.descuento)).toFixed(2)}</p>
-            </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // Cargar productos en el select
@@ -49,9 +59,10 @@ async function loadProductosSelect() {
         
         const select = document.getElementById('descuento-producto');
         select.innerHTML = '<option value="">Seleccionar Producto</option>' + 
-            productos.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
+            productos.map(p => `<option value="${p.id}">${p.nombre} - $${p.precio.toFixed(2)}</option>`).join('');
     } catch (error) {
         console.error('Error:', error);
+        showNotification('Error al cargar productos', 'error');
     }
 }
 
@@ -82,34 +93,17 @@ document.getElementById('descuento-form')?.addEventListener('submit', async (e) 
         });
         
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Error al crear descuento');
+            const errorText = await response.text();
+            throw new Error(errorText || 'Error al crear descuento');
         }
         
         showNotification('Descuento creado exitosamente', 'success');
         e.target.reset();
+        // Resetear el checkbox a su valor por defecto (checked)
+        document.getElementById('descuento-estado').checked = true;
         loadDescuentos();
     } catch (error) {
         console.error('Error:', error);
         showNotification(error.message, 'error');
     }
 });
-
-// Eliminar descuento
-async function deleteDescuento(id) {
-    if (!confirm('¿Estás seguro de eliminar este descuento?')) return;
-    
-    try {
-        const response = await fetch(`${API_BASE_URL}/descuentos/${id}`, {
-            method: 'DELETE'
-        });
-        
-        if (!response.ok) throw new Error('Error al eliminar descuento');
-        
-        showNotification('Descuento eliminado exitosamente', 'success');
-        loadDescuentos();
-    } catch (error) {
-        console.error('Error:', error);
-        showNotification('Error al eliminar descuento', 'error');
-    }
-}

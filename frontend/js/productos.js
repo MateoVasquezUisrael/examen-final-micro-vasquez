@@ -29,14 +29,15 @@ function displayProductos(productos) {
             <div class="item-header">
                 <span class="item-title">${producto.nombre}</span>
                 <div class="item-actions">
-                    <button class="btn btn-edit" onclick="editProducto(${producto.id})">Editar</button>
-                    <button class="btn btn-delete" onclick="deleteProducto(${producto.id})">Eliminar</button>
+                    <span class="badge ${producto.iva ? 'badge-active' : 'badge-inactive'}">
+                        ${producto.iva ? 'Con IVA' : 'Sin IVA'}
+                    </span>
                 </div>
             </div>
             <div class="item-details">
                 <p><strong>Precio:</strong> $${producto.precio.toFixed(2)}</p>
-                <p><strong>Stock:</strong> ${producto.stock} unidades</p>
-                ${producto.descripcion ? `<p><strong>Descripción:</strong> ${producto.descripcion}</p>` : ''}
+                ${producto.iva ? `<p><strong>Precio + IVA (15%):</strong> $${(producto.precio * 1.15).toFixed(2)}</p>` : ''}
+                <p><strong>ID Categoría:</strong> ${producto.idcategoria}</p>
             </div>
         </div>
     `).join('');
@@ -49,8 +50,8 @@ document.getElementById('producto-form')?.addEventListener('submit', async (e) =
     const producto = {
         nombre: document.getElementById('producto-nombre').value,
         precio: parseFloat(document.getElementById('producto-precio').value),
-        stock: parseInt(document.getElementById('producto-stock').value),
-        descripcion: document.getElementById('producto-descripcion').value
+        iva: document.getElementById('producto-iva').checked,
+        idcategoria: parseInt(document.getElementById('producto-idcategoria').value)
     };
     
     try {
@@ -66,59 +67,11 @@ document.getElementById('producto-form')?.addEventListener('submit', async (e) =
         
         showNotification('Producto creado exitosamente', 'success');
         e.target.reset();
+        // Resetear el checkbox a su valor por defecto (checked)
+        document.getElementById('producto-iva').checked = true;
         loadProductos();
     } catch (error) {
         console.error('Error:', error);
         showNotification('Error al crear producto', 'error');
     }
 });
-
-// Eliminar producto
-async function deleteProducto(id) {
-    if (!confirm('¿Estás seguro de eliminar este producto?')) return;
-    
-    try {
-        const response = await fetch(`${API_BASE_URL}/productos/${id}`, {
-            method: 'DELETE'
-        });
-        
-        if (!response.ok) throw new Error('Error al eliminar producto');
-        
-        showNotification('Producto eliminado exitosamente', 'success');
-        loadProductos();
-    } catch (error) {
-        console.error('Error:', error);
-        showNotification('Error al eliminar producto', 'error');
-    }
-}
-
-// Editar producto (simplificado - muestra prompt)
-async function editProducto(id) {
-    const newPrice = prompt('Ingrese el nuevo precio:');
-    if (newPrice === null) return;
-    
-    try {
-        // Primero obtener el producto actual
-        const getResponse = await fetch(`${API_BASE_URL}/productos/${id}`);
-        const producto = await getResponse.json();
-        
-        // Actualizar solo el precio
-        producto.precio = parseFloat(newPrice);
-        
-        const response = await fetch(`${API_BASE_URL}/productos/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(producto)
-        });
-        
-        if (!response.ok) throw new Error('Error al actualizar producto');
-        
-        showNotification('Producto actualizado exitosamente', 'success');
-        loadProductos();
-    } catch (error) {
-        console.error('Error:', error);
-        showNotification('Error al actualizar producto', 'error');
-    }
-}
